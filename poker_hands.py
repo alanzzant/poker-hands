@@ -14,19 +14,20 @@ def create_deck():
 
     return deck
 
-def get_hand(deck, hand_size):
-    return random.sample(deck, hand_size)
+def get_hand(deck):
+    # 5 cards per hand is a standard
+    return random.sample(deck, 5)
 
 def look_up_hand(hand):
     hand_counter = {
         'royal_flush': 0,     # consecutive bigger cards,      same_suit
         'straight_flush': 0,  # consecutive cards,             same suit
-        'straight': 0,        # consecutive cards,             any suit
-        'pair': 0,            # two of the same rank,          any suit 
-        'flush': 0,           # any cards,                     same suit
-        'three_of_a_kind': 0, # three of the same rank,        any suit
         'full_house': 0,      # a pair and a three of a kind
+        'flush': 0,           # any cards,                     same suit
+        'straight': 0,        # consecutive cards,             any suit
+        'three_of_a_kind': 0, # three of the same rank,        any suit
         'double_pair': 0,     # two pairs                      any suit
+        'pair': 0,            # two of the same rank,          any suit 
     }
 
     ranks_counter = dict(collections.Counter(card[1] for card in hand))
@@ -73,13 +74,13 @@ def look_up_hand(hand):
 
     return hand_counter
 
-def simulate_hands(hand_size, attempts):
+def simulate_hands(attempts):
     deck = create_deck()
     hands = []
     counter = {}
 
     for _ in range(attempts):
-        hand = get_hand(deck, hand_size)
+        hand = get_hand(deck)
         hands.append(hand)
 
         hand_counter = look_up_hand(hand)
@@ -93,13 +94,11 @@ def simulate_hands(hand_size, attempts):
     return {hand_type: n/attempts for (hand_type, n) in counter.items()}
 
 if __name__ == '__main__':
-    hand_size_input = input('How many cards per hand (5)? ') or '5'
-    hand_size = int(hand_size_input)
-    attempts_input = input('How many attempts (100000)? ') or '100000'
+    attempts_input = input('How many attempts (default 10000)? ') or '10000'
     attempts = int(attempts_input)
     #hand_type = input('What hand (comma-separated) '))
 
-    probabilities = simulate_hands(hand_size, attempts)
+    probabilities = simulate_hands(attempts)
 
     print('\n--- DIFFERENT HAND\'S PROBABILITIES ---\n')
     for (hand_type, probability) in probabilities.items():
